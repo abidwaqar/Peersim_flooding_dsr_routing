@@ -75,32 +75,13 @@ public class Initializer implements Control {
 		prot.setX(0.5);
 		prot.setY(0.5);
 
-		// Set coordinates x,y
-		// TODO: instead of randomizing, read coordinates from trace file;
-		// however, the reading can be done by Observer (Control) class
-
-        try {
-    		NetworkInfo net_in = NetworkInfo.getInstance();
-    		BufferedReader traceFBR = net_in.getFileBufferedReader();
-			
-    		String[] val = traceFBR.readLine().split("\t");
-			
-    		for (int i = 0; i < Network.size(); i++) 
-    		{
-				n = Network.get(i);
-				prot = (Coordinates) n.getProtocol(pid);
-				prot.setX(Integer.valueOf(val[2]));
-				prot.setY(Integer.valueOf(val[3]));	
-			}
-    		
-    		//TODO Set Neighbor nodes
-    		
-		} 
-        catch (IOException e)
-        {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}   	
+		for (int i = 1; i < Network.size(); i++) 
+		{
+			n = Network.get(i);
+			prot = (Coordinates) n.getProtocol(pid);
+			prot.setX(Integer.valueOf(0));
+			prot.setY(Integer.valueOf(0));
+		}	
 		return false;
 	}
 

@@ -7,7 +7,7 @@ SIZE 30
 NEIGHBOR_SIZE 5
 
 # parameters of periodic execution
-CYCLES 10
+CYCLES 2
 CYCLE 1
 
 # parameters of message transfer: delay values here are relative to cycle length, in percentage,
@@ -22,20 +22,11 @@ random.seed 1234567890
 network.size SIZE
 simulation.endtime CYCLE*CYCLES*1  # the last number is the actual number of cycles
 simulation.logtime CYCLE
+simulation.cycles CYCLES
 
 protocol.link peersim.core.IdleProtocol # implements Linkable
 
-protocol.pr3 examples.task2.ProtocolHLR
-protocol.pr3.linkable link
-protocol.pr3.step CYCLE
-protocol.pr3.transport 2unreltr
-
-protocol.pr2 examples.task2.ProtocolVLR
-protocol.pr2.linkable link
-protocol.pr2.step CYCLE
-protocol.pr2.transport 2unreltr
-
-protocol.pr1 examples.task2.ProtocolNode
+protocol.pr1 assignment.dsr.ProtocolNode
 protocol.pr1.linkable link
 protocol.pr1.step CYCLE
 protocol.pr1.transport 2unreltr
@@ -48,16 +39,16 @@ protocol.2unreltr peersim.transport.UnreliableTransport
 protocol.2unreltr.drop 0
 protocol.2unreltr.transport 1uniftr
 
-protocol.coord examples.task2.Coordinates
+protocol.coord assignment.dsr.Coordinates
 
-init.0 examples.task2.Initializer
+init.0 assignment.dsr.Initializer
 init.0.protocol coord
 
-init.1 examples.task2.Topology
+init.1 assignment.dsr.Topology
 init.1.protocol link
 init.1.coord_protocol coord
 
-control.io examples.task2.Observer
+control.io assignment.dsr.Observer
 control.io.protocol link
 control.io.coord_protocol coord
 control.io.step CYCLE

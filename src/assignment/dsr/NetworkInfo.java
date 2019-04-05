@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import com.sun.swing.internal.plaf.metal.resources.metal_zh_CN;
 
@@ -48,11 +50,12 @@ public class NetworkInfo {
 	private NetworkInfo()
 	{
 		network_size = Network.size();
+		neighbor_size = Configuration.getInt("NEIGHBOR_SIZE");
 //		trace_file_name = Configuration.getString("TRACEFILE", "mobisim_trace.txt");
 		node_coord_pid = Configuration.getPid("init.0.protocol");
 //		lookup_file_name = Configuration.getString("LOOKUPFILE", "lookup_trace.txt");
 		unreliable_transport_pid = 4;
-		graph = new NeighbourListGraph(false);
+		graph = new NeighbourListGraph(network_size, false);
 		
 //		try {
 //        	
@@ -91,6 +94,25 @@ public class NetworkInfo {
 //			}
 //		}
 //	}
+
+	public void printGraph()
+	{
+		for(int i = 0; i< network_size; ++i)
+		{
+			System.out.printf("Node: " + i + " --> ");
+			Collection<Integer> neighbor = graph.getNeighbours(i);
+			Iterator<Integer> itr = neighbor.iterator();
+			while (itr.hasNext())
+			{
+				System.out.print(itr.next() + ", ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public int getNeighbor_size() {
+		return neighbor_size;
+	}
 
 	public int getUnreliable_transport_pid() {
 		return unreliable_transport_pid;

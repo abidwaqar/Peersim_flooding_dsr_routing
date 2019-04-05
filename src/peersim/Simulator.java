@@ -186,21 +186,16 @@ public static void main(String[] args)
 			
 			// XXX could be done through reflection, but
 			// this is easier to read.
-			switch(SIMID)
-			{
-			case CDSIM:
-				CDSimulator.nextExperiment();
-				break;
-			case EDSIM:
-				EDSimulator.nextExperiment();
-				break;
-			}
-			
-			NetworkInfo.getInstance().printInfo();
-			int size = NetworkInfo.getInstance().getMeanCostPerSecond().size();
-			System.out.println("Update count: " + (NetworkInfo.getInstance().getUpdateCount() ));
-			System.out.println("Search count: " + (NetworkInfo.getInstance().getSearchCount()));
-			System.out.println("Total count: " + (NetworkInfo.getInstance().getUpdateCount() + NetworkInfo.getInstance().getSearchCount()));
+			CDSimulator.nextExperiment();
+
+//			switch(SIMID)
+//			{
+//			case CDSIM:
+//				break;
+//			case EDSIM:
+//				EDSimulator.nextExperiment();
+//				break;
+//			}
 		}
 	
 	} catch (MissingParameterException e) {
