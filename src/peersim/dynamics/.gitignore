@@ -1,0 +1,16 @@
+/DynamicNetwork.class
+/MethodInvoker.class
+/NodeInitializer.class
+/OscillatingNetwork.class
+/RandNI.class
+/StarNI.class
+/WireByMethod.class
+/WireFromFile.class
+/WireGraph.class
+/WireKOut.class
+/WireRegRootedTree.class
+/WireRingLattice.class
+/WireScaleFreeBA.class
+/WireScaleFreeDM.class
+/WireStar.class
+/WireWS.class

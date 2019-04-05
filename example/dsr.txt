@@ -2,8 +2,9 @@
 TRACEFILE mobisim_trace.txt
 LOOKUPFILE lookup_trace.txt
 
-# network size
-SIZE 10
+# network  PARAM
+SIZE 30
+NEIGHBOR_SIZE 5
 
 # parameters of periodic execution
 CYCLES 10
