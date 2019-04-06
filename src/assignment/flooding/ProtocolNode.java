@@ -1,9 +1,8 @@
-package assignment.dsr;
+package assignment.flooding;
 
 import peersim.config.*;
 import peersim.core.*;
 import peersim.transport.Transport;
-import sun.util.resources.cldr.ur.CurrencyNames_ur;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -52,64 +51,33 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 		Message aem = (Message) event;
 		GeneralNode current_node = (GeneralNode) node;
 		int msg_seq_no = aem.msg_seq_no;
-		int node_pid = net_in.getInstance().getUnreliable_transport_pid();
 		
-		if (aem.type == Message.message_type.route_request)
+		if(current_node.getID() == aem.dest_id)
 		{
-			if(current_node.getID() == aem.dest_id)
-			{
-				System.out.println("Dest " + aem.dest_id + " received msg " + aem.msg_seq_no + " from node " + aem.sender.getID());
-				aem.path.add((int)current_node.getID());
-				System.out.println("Node "+node.getID()+" dest Path: " + aem.path);
-				
-				//for route reply
-				aem.type = Message.message_type.route_reply;
-				aem.dest_id = (int) aem.sender.getID();
-				aem.sender = current_node;
-				
-//				System.out.println("HOLA" + current_node.getIndex());
-				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, current_node, new Message(aem), node_pid);
-			}
-			else if (current_node.msgs_seq_no.contains(msg_seq_no))
-			{
-				System.out.println("Node " + current_node.getID() + " has already sent msg " + msg_seq_no);
-			}
-			else
-			{
-//				System.out.println("Node " + node.getID());
-				current_node.msgs_seq_no.add(msg_seq_no);
-				aem.path.add((int)current_node.getID());
-				Collection<Integer> neighbor = net_in.getGraph().getNeighbours((int)node.getID());
-				if (aem.sender != null) {
+			System.out.println("Dest " + aem.dest_id + " received msg " + aem.msg_seq_no + " from node " + aem.sender.getID());
+		}
+		else if (current_node.msgs_seq_no.contains(msg_seq_no))
+		{
+			System.out.println("Node " + current_node.getID() + " has already sent msg " + msg_seq_no);
+		}
+		else
+		{
+			current_node.msgs_seq_no.add(msg_seq_no);
+			
+			Collection<Integer> neighbor = net_in.getGraph().getNeighbours((int)node.getID());
+			if (aem.sender != null) {
+				{
+//					System.out.println("Node: " + current_node.getID() + " array size: " + current_node.msgs_seq_no.size());
+					Iterator<Integer> itr = neighbor.iterator();
+					while(itr.hasNext())
 					{
-//						System.out.println("Node: " + current_node.getID() + " array size: " + current_node.msgs_seq_no.size());
-						Iterator<Integer> itr = neighbor.iterator();
-						while(itr.hasNext())
-						{
-							int node_id = itr.next();
-							System.out.println("Node " + node.getID() + " sending message " + msg_seq_no + " to Node " + node_id);
-							((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(node_id), new Message(aem), node_pid);
-//							System.out.println("Cycle time: " + CommonState.getTime());
-						}
+						int node_id = itr.next();
+						int node_pid = net_in.getInstance().getUnreliable_transport_pid();
+						System.out.println("Node " + node.getID() + " sending message " + msg_seq_no + " to Node " + node_id);
+						((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(node_id), aem, node_pid);
+//						System.out.println("Cycle time: " + CommonState.getTime());
 					}
 				}
-			}
-		}
-		else if (aem.type == Message.message_type.route_reply)
-		{
-			System.out.println("Current Node "+ current_node.getID());
-			System.out.println("Path:  " + aem.path);
-			if(current_node.getID() == aem.dest_id)
-			{
-				System.out.println("Source Path: " + aem.path);
-				//TODO send data
-			}
-			else
-			{
-				//TODO route error
-				
-				int next_idx = aem.path.indexOf((int) current_node.getID()) -1;
-				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), aem, node_pid);
 			}
 		}
 		

@@ -26,7 +26,7 @@ simulation.logtime CYCLE
 
 protocol.link peersim.core.IdleProtocol # implements Linkable
 
-protocol.pr1 assignment.dsr.ProtocolNode
+protocol.pr1 assignment.flooding.ProtocolNode
 protocol.pr1.linkable link
 protocol.pr1.step CYCLE
 protocol.pr1.transport 2unreltr
@@ -39,21 +39,21 @@ protocol.2unreltr peersim.transport.UnreliableTransport
 protocol.2unreltr.drop 0
 protocol.2unreltr.transport 1uniftr
 
-protocol.coord assignment.dsr.Coordinates
+protocol.coord assignment.flooding.Coordinates
 
-init.0 assignment.dsr.Initializer
+init.0 assignment.flooding.Initializer
 init.0.protocol coord
 
-init.1 assignment.dsr.Topology
+init.1 assignment.flooding.Topology
 init.1.protocol link
 init.1.coord_protocol coord
 
-control.io assignment.dsr.Observer
+control.io assignment.flooding.Observer
 control.io.protocol link
 control.io.coord_protocol coord
 control.io.step 1
 
-control.0 assignment.dsr.Mobility
-control.0.protocol link
-control.0.coord_protocol coord
-control.0.step 2
+#control.0 assignment.flooding.Mobility
+#control.0.protocol link
+#control.0.coord_protocol coord
+#control.0.step 0

@@ -1,4 +1,4 @@
-package assignment.dsr;
+package assignment.flooding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,6 @@ public class Mobility implements Control
 		for (int i = 0; i < nodes_to_change; ++i)
 		{
 			rand_node = rand.nextInt(net_size);
-			System.out.println("Rand Node: " + rand_node);
 			Object[] curr_node_neighbor = g.getNeighbours(rand_node).toArray();
 			for (int j = 0; j< curr_node_neighbor.length; ++j)
 			{
