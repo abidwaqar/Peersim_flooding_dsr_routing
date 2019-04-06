@@ -186,16 +186,17 @@ public static void main(String[] args)
 			
 			// XXX could be done through reflection, but
 			// this is easier to read.
-			CDSimulator.nextExperiment();
+//			CDSimulator.nextExperiment();
 
-//			switch(SIMID)
-//			{
-//			case CDSIM:
-//				break;
-//			case EDSIM:
-//				EDSimulator.nextExperiment();
-//				break;
-//			}
+			switch(SIMID)
+			{
+			case CDSIM:
+				CDSimulator.nextExperiment();
+				break;
+			case EDSIM:
+				EDSimulator.nextExperiment();
+				break;
+			}
 		}
 	
 	} catch (MissingParameterException e) {

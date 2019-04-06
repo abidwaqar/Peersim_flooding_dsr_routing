@@ -3,11 +3,12 @@ TRACEFILE mobisim_trace.txt
 LOOKUPFILE lookup_trace.txt
 
 # network  PARAM
-SIZE 30
-NEIGHBOR_SIZE 5
+SIZE 10
+NEIGHBOR_SIZE 2
+MOBILITY 10
 
 # parameters of periodic execution
-CYCLES 2
+CYCLES 5
 CYCLE 1
 
 # parameters of message transfer: delay values here are relative to cycle length, in percentage,
@@ -22,7 +23,6 @@ random.seed 1234567890
 network.size SIZE
 simulation.endtime CYCLE*CYCLES*1  # the last number is the actual number of cycles
 simulation.logtime CYCLE
-simulation.cycles CYCLES
 
 protocol.link peersim.core.IdleProtocol # implements Linkable
 
@@ -51,4 +51,9 @@ init.1.coord_protocol coord
 control.io assignment.dsr.Observer
 control.io.protocol link
 control.io.coord_protocol coord
-control.io.step CYCLE
+control.io.step 1
+
+#control.0 assignment.dsr.Mobility
+#control.0.protocol link
+#control.0.coord_protocol coord
+#control.0.step 0

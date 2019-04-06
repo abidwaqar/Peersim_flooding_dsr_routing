@@ -6,7 +6,6 @@ import peersim.transport.Transport;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 import peersim.cdsim.CDProtocol;
 import peersim.edsim.EDProtocol;
 
@@ -37,32 +36,6 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 	 */
 
 	public void nextCycle(Node node, int pid) {
-		NetworkInfo net_in = NetworkInfo.getInstance();
-//		Message aem = (Message) event;
-//		Linkable linkable = (Linkable) node.getProtocol(FastConfig.getLinkable(pid));
-//		Node peern = linkable.getNeighbor(0);
-//		if (peern == null)
-//			return;
-//		if (peern.getID() == 0)
-//			return;
-
-		Collection<Integer> neighbor = net_in.getGraph().getNeighbours((int)node.getID());
-//		Object[] neighbor =  net_in.getGraph().getNeighbours((int)node.getID());
-		
-//		if (aem.sender != null) {
-		{
-			{
-				Iterator<Integer> itr = neighbor.iterator();
-				while(itr.hasNext())
-				{
-					int node_id = itr.next();
-					int node_pid = net_in.getInstance().getUnreliable_transport_pid();
-					System.out.println("Node " + node.getID() + " sending message to Node  " + node_id);
-					((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(node_id), new Message(node), node_pid);
-//					System.out.println("Cycle time: " + CommonState.getTime());
-				}
-			}
-		}
 	}
 
 	// --------------------------------------------------------------------------
@@ -73,31 +46,41 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 	// --------------------------------------------------------------------------
 	/*** This is the standard method to define to process incoming messages. */
 	public void processEvent(Node node, int pid, Object event) {
+		
 		NetworkInfo net_in = NetworkInfo.getInstance();
 		Message aem = (Message) event;
-//		Linkable linkable = (Linkable) node.getProtocol(FastConfig.getLinkable(pid));
-//		Node peern = linkable.getNeighbor(0);
-//		if (peern == null)
-//			return;
-//		if (peern.getID() == 0)
-//			return;
-
-		Collection<Integer> neighbor = net_in.getGraph().getNeighbours((int)node.getID());
-//		Object[] neighbor =  net_in.getGraph().getNeighbours((int)node.getID());
+		GeneralNode current_node = (GeneralNode) node;
+		int msg_seq_no = aem.msg_seq_no;
 		
-		if (aem.sender != null) {
-			{
-				Iterator<Integer> itr = neighbor.iterator();
-				while(itr.hasNext())
+		if(current_node.getID() == aem.dest_id)
+		{
+			System.out.println("Dest " + aem.dest_id + " received msg " + aem.msg_seq_no + " from node " + aem.sender.getID());
+		}
+		else if (current_node.msgs_seq_no.contains(msg_seq_no))
+		{
+			System.out.println("Node " + current_node.getID() + " has already sent msg " + msg_seq_no);
+		}
+		else
+		{
+			current_node.msgs_seq_no.add(msg_seq_no);
+			
+			Collection<Integer> neighbor = net_in.getGraph().getNeighbours((int)node.getID());
+			if (aem.sender != null) {
 				{
-					int node_id = itr.next();
-					int node_pid = net_in.getInstance().getUnreliable_transport_pid();
-					System.out.println("Node " + node.getID() + " sending message to Node  " + node_id);
-					((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(node_id), new Message(node), node_pid);
-//					System.out.println("Cycle time: " + CommonState.getTime());
+//					System.out.println("Node: " + current_node.getID() + " array size: " + current_node.msgs_seq_no.size());
+					Iterator<Integer> itr = neighbor.iterator();
+					while(itr.hasNext())
+					{
+						int node_id = itr.next();
+						int node_pid = net_in.getInstance().getUnreliable_transport_pid();
+						System.out.println("Node " + node.getID() + " sending message " + msg_seq_no + " to Node " + node_id);
+						((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(node_id), aem, node_pid);
+//						System.out.println("Cycle time: " + CommonState.getTime());
+					}
 				}
 			}
 		}
+		
 	}
 
 	// ====================== Linkable implementation =====================

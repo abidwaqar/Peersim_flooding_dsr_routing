@@ -15,11 +15,11 @@ public class Observer extends GraphObserver {
 	}
 
 	public boolean execute() {
-		
+				
 		NetworkInfo net_in = NetworkInfo.getInstance();
 		Node current_node = Network.get(0);
 		((Transport) current_node.getProtocol(FastConfig.getTransport(net_in.getUnreliable_transport_pid()))).send(
-				current_node, current_node, new Message(current_node), net_in.getUnreliable_transport_pid());
+				current_node, current_node, new Message(current_node, 4), net_in.getUnreliable_transport_pid());
 
 		return false;
 	}

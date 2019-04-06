@@ -5,3 +5,5 @@
 /Observer.class
 /ProtocolNode.class
 /Topology.class
+/Mobility.class
+/Message$message_type.class

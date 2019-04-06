@@ -18,6 +18,8 @@
 		
 package peersim.core;
 
+import java.util.ArrayList;
+
 import peersim.config.*;
 
 /**
@@ -57,6 +59,9 @@ protected int failstate = Fallible.OK;
 */
 private long ID;
 
+public ArrayList<Integer> msgs_seq_no;
+
+
 // ================ constructor and initialization =================
 // =================================================================
 
@@ -78,6 +83,7 @@ public GeneralNode(String prefix) {
 			Configuration.getInstance(names[i]);
 		protocol[i] = p; 
 	}
+	msgs_seq_no = new ArrayList<>();
 }
 
 
@@ -91,6 +97,7 @@ public Object clone() {
 	result.protocol = new Protocol[protocol.length];
 	CommonState.setNode(result);
 	result.ID=nextID();
+	result.msgs_seq_no = new ArrayList<Integer>();
 	for(int i=0; i<protocol.length; ++i) {
 		CommonState.setPid(i);
 		result.protocol[i] = (Protocol)protocol[i].clone();
