@@ -5,6 +5,7 @@ import peersim.core.*;
 import peersim.transport.Transport;
 import sun.util.resources.cldr.ur.CurrencyNames_ur;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import peersim.cdsim.CDProtocol;
@@ -58,17 +59,30 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 		{
 			if(current_node.getID() == aem.dest_id)
 			{
+//				CommonState.setTime(CommonState.getTime() + 1);
 				System.out.println("Dest " + aem.dest_id + " received msg " + aem.msg_seq_no + " from node " + aem.sender.getID());
 				aem.path.add((int)current_node.getID());
 				System.out.println("Node "+node.getID()+" dest Path: " + aem.path);
 				
+				int message_sender = (int)aem.sender.getID();
 				//for route reply
 				aem.type = Message.message_type.route_reply;
 				aem.dest_id = (int) aem.sender.getID();
 				aem.sender = current_node;
 				
 //				System.out.println("HOLA" + current_node.getIndex());
-				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, current_node, new Message(aem), node_pid);
+//				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(current_node, current_node, new Message(aem), node_pid);
+				
+				if (current_node.sender_msgs.containsKey(message_sender))
+				{
+					current_node.sender_msgs.get(message_sender).add(aem);
+				}
+				else
+				{
+					ArrayList<Message> msgs = new ArrayList<Message>();
+					msgs.add(aem);
+					current_node.sender_msgs.put(message_sender, msgs);
+				}
 			}
 			else if (current_node.msgs_seq_no.contains(msg_seq_no))
 			{
@@ -97,12 +111,31 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 		}
 		else if (aem.type == Message.message_type.route_reply)
 		{
-			System.out.println("Current Node "+ current_node.getID());
-			System.out.println("Path:  " + aem.path);
+//			System.out.println("Current Node "+ current_node.getID());
+			System.out.println("route reply Path:  " + aem.path);
 			if(current_node.getID() == aem.dest_id)
 			{
 				System.out.println("Source Path: " + aem.path);
-				//TODO send data
+				int message_sender = (int) aem.sender.getID();
+				//for route reply
+				aem.type = Message.message_type.data;
+				aem.dest_id = (int) aem.sender.getID();
+				aem.sender = current_node;
+				
+//				System.out.println("HOLA" + current_node.getIndex());
+//				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(current_node, current_node, new Message(aem), node_pid);
+				
+				if (current_node.sender_msgs.containsKey(message_sender))
+				{
+					current_node.sender_msgs.get(message_sender).add(aem);
+				}
+				else
+				{
+					ArrayList<Message> msgs = new ArrayList<Message>();
+					msgs.add(aem);
+					current_node.sender_msgs.put(message_sender, msgs);
+				}
+			
 			}
 			else
 			{
@@ -110,6 +143,61 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 				
 				int next_idx = aem.path.indexOf((int) current_node.getID()) -1;
 				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), aem, node_pid);
+			}
+		}
+		else if (aem.type == Message.message_type.data)
+		{
+//			System.out.println("WE ARE IN DATA");
+//			System.out.println("Current Node "+ current_node.getID());
+//			System.out.println("Path:  " + aem.path);
+			if(current_node.getID() == aem.dest_id)
+			{
+				System.out.println("Data reached destination");
+				System.out.println("Source Path: " + aem.path);
+				//for route reply
+			}
+			else
+			{
+				int next_idx = aem.path.indexOf((int) current_node.getID()) + 1;
+				
+				if (net_in.getInstance().getGraph().getNeighbours((int)current_node.getID()).contains(aem.path.get(next_idx)))
+				{
+					System.out.println("DATA, current node:" + current_node.getID() + " sending to node: " + aem.path.get(next_idx));
+					((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), new Message(aem), node_pid);
+				}
+				else
+				{
+					//for route reply
+					aem.type = Message.message_type.route_error;
+					aem.dest_id = (int) aem.sender.getID();
+					aem.sender = current_node;
+					
+//					System.out.println("HOLA" + current_node.getIndex());
+					((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(current_node, current_node, new Message(aem), node_pid);
+				}
+				
+			}
+		}
+		else if (aem.type == Message.message_type.route_error)
+		{
+			if(current_node.getID() == aem.dest_id)
+			{
+				System.out.println("Route Error reached destination");
+				System.out.println("Source Path: " + aem.path);
+//				System.out.println(aem.path.indexOf((int) aem.sender.getID()));
+//				System.out.println(aem.path.get(aem.path.indexOf((int )aem.sender.getID()) + 1));
+				System.out.println("Error occured from node: "+ aem.sender.getID() + " to node " + aem.path.get(aem.path.indexOf((int)aem.sender.getID()) + 1));
+				//for route reply
+				
+				// TODO dest
+				((Transport) current_node.getProtocol(FastConfig.getTransport(node_pid))).send(
+						current_node, current_node, new Message(current_node, aem.path.get(aem.path.size()-1), Message.message_type.route_request), node_pid);
+			}
+			else
+			{
+				int next_idx = aem.path.indexOf((int) current_node.getID()) - 1;
+				System.out.println("route error, current node:" + current_node.getID() + " sending to node: " + aem.path.get(next_idx));
+				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), new Message(aem), node_pid);
 			}
 		}
 		

@@ -5,10 +5,10 @@ LOOKUPFILE lookup_trace.txt
 # network  PARAM
 SIZE 10
 NEIGHBOR_SIZE 2
-MOBILITY 10
+MOBILITY 10 
 
 # parameters of periodic execution
-CYCLES 5
+CYCLES 3
 CYCLE 1
 
 # parameters of message transfer: delay values here are relative to cycle length, in percentage,

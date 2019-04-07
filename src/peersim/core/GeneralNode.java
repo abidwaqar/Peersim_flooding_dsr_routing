@@ -19,7 +19,9 @@
 package peersim.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import assignment.dsr.Message;
 import peersim.config.*;
 
 /**
@@ -60,6 +62,8 @@ protected int failstate = Fallible.OK;
 private long ID;
 
 public ArrayList<Integer> msgs_seq_no;
+public HashMap<Integer, ArrayList<Message>> sender_msgs;
+
 
 
 // ================ constructor and initialization =================
@@ -84,6 +88,7 @@ public GeneralNode(String prefix) {
 		protocol[i] = p; 
 	}
 	msgs_seq_no = new ArrayList<>();
+	sender_msgs = new HashMap<Integer, ArrayList<Message>>();
 }
 
 
@@ -98,6 +103,7 @@ public Object clone() {
 	CommonState.setNode(result);
 	result.ID=nextID();
 	result.msgs_seq_no = new ArrayList<Integer>();
+	result.sender_msgs = new HashMap<>();
 	for(int i=0; i<protocol.length; ++i) {
 		CommonState.setPid(i);
 		result.protocol[i] = (Protocol)protocol[i].clone();

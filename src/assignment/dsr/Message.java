@@ -9,10 +9,10 @@ import peersim.core.Node;
  * The type of a message. It contains the sender node
  * of type {@link peersim.core.Node}.
  */
-class Message {
+public class Message {
 	
 	public enum message_type{
-		route_request, route_reply, route_err, data
+		route_request, route_reply, route_error, data
 	}
 
 	/**

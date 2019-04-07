@@ -18,8 +18,10 @@ public class Observer extends GraphObserver {
 		NetworkInfo net_in = NetworkInfo.getInstance();
 		Node current_node = Network.get(0);
 		((Transport) current_node.getProtocol(FastConfig.getTransport(net_in.getUnreliable_transport_pid()))).send(
-				current_node, current_node, new Message(current_node, 9, Message.message_type.route_request), net_in.getUnreliable_transport_pid());
+				current_node, current_node, new Message(current_node, 4, Message.message_type.route_request), net_in.getUnreliable_transport_pid());
 
+		
+	//TODO remove from sender msgs
 		return false;
 	}
 
