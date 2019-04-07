@@ -38,6 +38,7 @@ public class NetworkInfo {
 	private int unreliable_transport_pid;
 	private NeighbourListGraph graph;
 	private int neighbor_size;
+	private int sending_rate;
 
 	public void printInfo()
 	{
@@ -56,6 +57,7 @@ public class NetworkInfo {
 //		lookup_file_name = Configuration.getString("LOOKUPFILE", "lookup_trace.txt");
 		unreliable_transport_pid = 4;
 		graph = new NeighbourListGraph(network_size, false);
+		sending_rate = Configuration.getInt("SENDING_RATE");
 		
 //		try {
 //        	
@@ -110,6 +112,10 @@ public class NetworkInfo {
 		}
 	}
 	
+	public int getSending_rate() {
+		return sending_rate;
+	}
+
 	public int getNeighbor_size() {
 		return neighbor_size;
 	}
