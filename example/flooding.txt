@@ -53,7 +53,7 @@ control.io.protocol link
 control.io.coord_protocol coord
 control.io.step 1
 
-#control.0 assignment.flooding.Mobility
-#control.0.protocol link
-#control.0.coord_protocol coord
-#control.0.step 0
+control.0 assignment.flooding.Mobility
+control.0.protocol link
+control.0.coord_protocol coord
+control.0.step 2

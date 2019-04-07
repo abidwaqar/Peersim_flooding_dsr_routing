@@ -58,4 +58,4 @@ control.io.step 1
 control.0 assignment.dsr.Mobility
 control.0.protocol link
 control.0.coord_protocol coord
-control.0.step 2
+control.0.step 1

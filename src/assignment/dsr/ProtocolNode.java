@@ -140,11 +140,18 @@ public class ProtocolNode implements CDProtocol, EDProtocol, Linkable {
 			}
 			else
 			{
-				//TODO route error
 				int next_idx = aem.path.indexOf((int) current_node.getID()) -1;
-				System.out.println("Route REP-> Current Node " + current_node.getID() +
-						" Sending msg " + aem.msg_seq_no + " to node " + aem.path.get(next_idx));
-				((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), aem, node_pid);
+				if (net_in.getGraph().getNeighbours((int)current_node.getID()).contains(aem.path.get(next_idx)))
+				{
+					System.out.println("Route REP-> Current Node " + current_node.getID() +
+							" Sending msg " + aem.msg_seq_no + " to node " + aem.path.get(next_idx));
+					((Transport) node.getProtocol(FastConfig.getTransport(node_pid))).send(node, Network.get(aem.path.get(next_idx)), aem, node_pid);
+				}
+				else
+				{
+					System.out.println("Due to mobility route change, route reply is dropped at Node " + current_node.getID());
+				}
+				
 			}
 		}
 		else if (aem.type == Message.message_type.data)
